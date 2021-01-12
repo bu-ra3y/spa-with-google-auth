@@ -45,9 +45,7 @@ Give it a name, done.
 Note the `App ID` and `App Secret`.
 
 Note the section called `Authorized redirect URIs`.
-The URIs here will need to match those used in your Cognito User Pool App Client Redirect URIs (see below).
-For now input: `http://localhost:8081`
-Note: if you are changing this setting, it may take time to go into effect (minutes?).
+The URIs here will need to match the URI that Cognito asks Google to redirect to. (we'll get to that below).
 
 ### Create a Cognito User Pool
 
@@ -77,7 +75,7 @@ Un-tick `Generate Client Secret`
 Done, create it.
 
 User Pool Settings > App Integration > App Client Settings
-Tick to enable Cognito User Pool and Google
+Tick to enable Google only (the only Auth mechanism I want to allow)
 The Callback URL is where the user is directed after authenticating.
 For now, to support development work:
 `Callback URL` = `http://localhost:8081`
@@ -117,3 +115,14 @@ with the granted token appended to the URI like this:
 
 In my case I am using the `Implicit Code Grant` flow,
 so the token should be a Cognito User Pool token.
+
+## Add the Cognito App Client as an allowed redirect for the Google App
+
+Go back to your Google API Credentials: https://console.developers.google.com/apis/credentials
+Click on the `OAth 2.0 Client ID` you created, `Authorized redirect URIs` section
+and add:
+https://<cognitoAppClientDomainYouChose>/oauth2/idpresponse
+In my case:
+https://socotra.auth.us-east-1.amazoncognito.com/oauth2/idpresponse
+
+Save

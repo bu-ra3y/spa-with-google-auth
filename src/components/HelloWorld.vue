@@ -2,6 +2,7 @@
   <div class="hello">
     <h1>Welcome!</h1>
     <h2>{{ msg }}</h2>
+    <h3>URL Parameters: {{ window.location.search }}</h3>
   </div>
 </template>
 
