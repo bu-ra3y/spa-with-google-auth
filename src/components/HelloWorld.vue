@@ -18,6 +18,7 @@
           We {{ haveAuthInformation ? "DO" : "do NOT" }} have auth information
           for you.
         </h2>
+        <!-- TODO: when we have AUTH information check it against API Gateway /authorized endpoint -->
         <ul v-if="haveAuthInformation">
           <li>id_token: {{ id_token }}</li>
           <li>access_token: {{ access_token }}</li>
