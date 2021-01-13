@@ -1,18 +1,12 @@
 <template>
-  <div class="hello">
-    <h1>Welcome!</h1>
-    <h2>{{ msg }}</h2>
-    <h3>URL Parameters: {{ window.location.search }}</h3>
-  </div>
+  <div class="hello"></div>
 </template>
 
 <script>
 export default {
   name: "HelloWorld",
   data: function() {
-    return {
-      msg: "You are NOT authenticated."
-    };
+    return {};
   }
 };
 </script>
