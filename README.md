@@ -116,7 +116,7 @@ with the granted token appended to the URI like this:
 In my case I am using the `Implicit Code Grant` flow,
 so the token should be a Cognito User Pool token.
 
-## Add the Cognito App Client as an allowed redirect for the Google App
+### Add the Cognito App Client as an allowed redirect for the Google App
 
 Go back to your Google API Credentials: https://console.developers.google.com/apis/credentials
 Click on the `OAth 2.0 Client ID` you created, `Authorized redirect URIs` section
@@ -126,3 +126,82 @@ In my case:
 https://socotra.auth.us-east-1.amazoncognito.com/oauth2/idpresponse
 
 Save
+
+### Set up API Gateway to use Cognito User Pool as the Authorizer for APIs
+
+Create an API on API Gatway
+
+Create an Authorizer that uses your Cognito User Pool
+TODO: API Gateway > <my API> > Authorizers > ...
+name: google_auth
+
+### Create an endpoint on API Gateway that uses the Authorizor
+
+Idea here is a simple test of the Authorizer
+
+Create a basic resource on the API to test that the Cognito Pool Authorizor works
+API Gateway > <my API> > Resources > / > Actions > Create Resource
+`Resource Name`: `authorized`
+`Resource path`: `/authorized`
+Enable API Gateway CORS: yes
+
+Add a method to it:
+API Gateway > <my API> > Resources > /authorized > Actions > Create Method > POST
+Integration Type: Mock
+Method Request > Authorization: google_auth (the API Gateway Authorizor you set up)
+
+#### Enable CORS on API Gateway
+
+A helpful primer here: https://www.serverless.com/blog/cors-api-gateway-survival-guide
+
+This will allow me to make the calls the my APIs on API Gateway from my webapp which is running on a different domain.
+
+API Gateway > <my API> > Resources > /authorized > Actions > Enable CORS
+
+This will allow requests to this Resource (`/authorized`). The methods on this Resource are using the Mock Integration
+meaning API Gateway will do the responding instead of, say, a Lambda function.
+If I was using a Lambda function to serve an endpoint, I'd need to include in the response from my Lambda,
+the necessary CORS headers.
+
+API Gateway > <my API> > Gateway Responses > Unauthorized > Edit > Reponse Headers > add this:
+`Access-Control-Allow-Origin` = `'*'`
+
+This will allow an Unauthorized answer to go through with a normal `401`.
+
+### Test Authentication
+
+Deploy your API
+API Gateway > <my API> > Resources > Actions > Deploy API
+
+And test:
+
+Authenticate by visiting the Cognito User Pool App Client UI: https://socotra.auth.us-east-1.amazoncognito.com/login?response_type=token&client_id=3pcr6kgujtv3e4esatvlkc5ukk&redirect_uri=http://localhost:8081
+Take the `id_token` that is returned as a URL fragment.
+Send it as the content of the `Authorization` header in a `POST` to your `/authorized` endpoint
+like mine: https://5xhos1hzad.execute-api.us-east-1.amazonaws.com/dev/authorized
+A reply of `200` means that the token is good; `401` otherwise.
+
+### Create an endpoint that gives you the secret data
+
+...but only if you are authorized!
+
+Create another resource in your API, `/secrets` with method `GET`.
+Again, set it to use the Authorizor,
+In the method's Integration Response > 200 response > Mapping Templates > application/json > use this JSON for the template:
+
+```json
+{
+  "data": [1, 2, 3, 4, 5]
+}
+```
+
+Enable CORS on the Resource: API Gateway > <my API> > Resources > /secrets > Actions > Enable CORS
+Include the options to configure CORS on the `Gateway Responses`.
+
+Deploy the API again (Actions > Deploy API)
+
+Now `GET` the `/secrets` endpoint,
+like mine: https://5xhos1hzad.execute-api.us-east-1.amazonaws.com/dev/secrets
+With no Authorization header you should get a `401`.
+With an expired token you should get a `401` with a message mentions the expiration.
+With a good token you'll get a `200` and you'll see the data come back.
