@@ -20,7 +20,7 @@
           >
         </div>
         <div v-if="token">
-          <h2>You have a {{ goodToken ? "GOOD" : "" }} token!</h2>
+          <h2>You have a token!</h2>
           <span v-if="secretData">Secret Data: {{ secretData }}</span>
         </div>
       </v-col>
@@ -40,11 +40,8 @@ export default {
   data: function() {
     return {
       loginUrl: "",
-      code: null,
       token: null,
-      goodToken: null,
-      secretData: null,
-      arrayHash: null
+      secretData: null
     };
   },
   methods: {
@@ -147,7 +144,6 @@ export default {
     },
     badTokens: function() {
       this.token = null;
-      this.goodToken = false;
     }
   },
   created: function() {
