@@ -14,14 +14,15 @@
         <h1 class="display-2 font-weight-bold mb-3">
           Welcome!
         </h1>
-        <div v-if="!token">
-          <v-btn block color="primary" elevation="8" large :href="loginUrl"
-            >Authenticate</v-btn
-          >
-        </div>
         <div v-if="token">
-          <h2>You have a token!</h2>
-          <span v-if="secretData">Secret Data: {{ secretData }}</span>
+          <h2>You are authenticated!</h2>
+          <span v-if="secretData">Secret Data: {{ secretData }} </span>
+          <span v-else>"Getting secret data..."</span>
+        </div>
+        <div v-else>
+          <v-btn block color="primary" elevation="8" large :href="loginUrl">
+            Authenticate
+          </v-btn>
         </div>
       </v-col>
     </v-row>
