@@ -148,7 +148,8 @@ export default {
   },
   created: function() {
     // Check to see if we are receiving an Authorization Code in the Browser's URL bar
-    // TODO: does not work if I have to actually log in to my google account in browser
+    // FIXME: does not work if I have to actually log in to my google account in browser
+    // FIXME: auth flow does not work if: go through auth flow then do page refresh
     const urlQueryString = window.location.search.substring(1); // remove leading "?"
     let urlSearchParams = new URLSearchParams(urlQueryString);
     const code = urlSearchParams.get("code");
@@ -156,6 +157,12 @@ export default {
     if (code && state) {
       // Auth Step 2: User has logged in and we are receiving the resulting Authorization Code and PKCE State
       console.debug(`Auth Step 2: Received Authorization Code + State`);
+      // Remove query string from Browser URL
+      const newUrl = window.location
+        .toString()
+        .replace(window.location.search, "");
+      window.history.replaceState({}, document.title, newUrl);
+
       // Verify that the PKCE State matches
       const priorPkceState = sessionStorage.getItem("pkceState");
       //  PKCE State is created before we request the Authorization Code
