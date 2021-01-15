@@ -14,7 +14,7 @@
         <h1 class="display-2 font-weight-bold mb-3">
           Welcome!
         </h1>
-        <div v-if="!code">
+        <div v-if="!token">
           <v-btn block color="primary" elevation="8" large :href="loginUrl"
             >Authenticate</v-btn
           >
