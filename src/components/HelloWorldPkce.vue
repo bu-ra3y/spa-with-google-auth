@@ -120,11 +120,11 @@ export default {
         ""
       );
       const decodedHash = btoa(stringifiedArrayHash);
-      const base64URL = decodedHash
+      // Return Base-64 encoded URL
+      return decodedHash
         .replace(/\+/g, "-")
         .replace(/\//g, "_")
         .replace(/=+$/, "");
-      return base64URL;
     },
     loadProtectedContent: function() {
       this.getSecretData();
@@ -167,7 +167,7 @@ export default {
       const priorPkceState = sessionStorage.getItem("pkceState");
       //  PKCE State is created before we request the Authorization Code
       //   and then used after we receive the Authorization Code when the App is loaded a second time
-      //   in order to verify aginst the State sent alongside the Authorization Code
+      //   in order to verify against the State sent alongside the Authorization Code
       if (state !== priorPkceState) {
         console.error(
           `PKCE state that I have (${priorPkceState}) does not match that
@@ -182,7 +182,7 @@ export default {
       //  signified by not receiving a code in the URL
       console.debug(`Auth Step 1: Log in!`);
       // signified by we are neither receiving a code nor have one stored
-      // redirect to Cognito OAuth2 /oath2/authorize for signin (via the Authorize button shown)
+      // redirect to Cognito OAuth2 /oath2/authorize for sign-in (via the Authorize button shown)
 
       // Create PKCE "pkceState" and save it in Session storage
       //  This is something created before we request the Authorization Code

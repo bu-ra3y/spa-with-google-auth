@@ -214,7 +214,7 @@ that is, unless the auth token provided doesn't check out.
 
 A helpful primer here: https://www.serverless.com/blog/cors-api-gateway-survival-guide
 
-This will allow me to make the calls from my SPA which is one one domain (including 'localhost')
+This will allow me to make the calls from my SPA which is on one domain (including 'localhost')
 to my APIs on API Gateway which are hosted on a different domain.
 
 API Gateway > <my API> > Resources > /authorized > Actions > Enable CORS
