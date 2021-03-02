@@ -42,6 +42,23 @@ instead of the `HelloWorldPkce.vue` component; change that in `App.vue`.
   Instead, I send the token to my APIs that house the protected content. API Gateway is configured
   to check the token (via Cognito) before hitting the protected APIs. This seems sufficient.
 
+### Authentication Architecture
+
+![Alt Text](docs/img/auth.png)
+
+1. Browser loads the SPA from an S3 Bucket.
+   The SPA should not contain any sensitive data.
+2. SPA redirects to the Cognito Login Page.
+   The Cognito Login pages provides buttons, e.g. Login with Google, Login with Amazon, etc.
+   After auth, via Google in this case, Cognito Login Page redirects to the SPA with an auth token.
+3. SPA page is loaded again (due to the redirect in step 2),
+   this time with an Auth token.
+   The SPA uses the auth token when making a request to API Gateway endpoint.
+   API Gateway passes that token to a configured Authorizer, which defers to the Cognito User Pool.
+   The User Pool decides whether the token is valid.
+   If so, API Gateway allows the request to go through to the Lambda Function,
+   which provides the sensitive data.
+
 ## Recreate this project
 
 ### Create a new Vue project
